@@ -8,15 +8,16 @@ from flask_restful import Resource
 
 # Local imports
 from config import app, db, api
+
 # Add your model imports
 from models import *
 
 # Views go here!
 
-@app.route('/')
-def get():
-    return '<h1>Project Server</h1>'
 
+@app.route("/")
+def get():
+    return "<h1>Project Server</h1>"
 
 
 # from flask import Flask, request, make_response, jsonify
@@ -36,25 +37,43 @@ def get():
 # migrate = Migrate(app, db)
 # db.init_app(app)
 
+
 # Views go here!
-@app.route('/about')
+@app.route("/about")
 def index():
-    pass        
+    pass
+
 
 # Posts Routes
 
+
 class Posts(Resource):
     def get(self):
-        posts = [post.to_dict(only=("id","title","body")) for post in Post.query.all()]
-        return make_response(posts, 200)
+        # posts = [
+        #     post.to_dict(only=("user.name", "title", "body", "created_at"))
+        #     for post in Post.query.all()
+        # ]
+        # return make_response(posts, 200)
+
+        posts = Post.query.all()
+        rendered_post_data = []
+
+        for p in posts:
+            post_obj = {
+                "title": p.title,
+                "body": p.body,
+                "created_at": p.created_at,
+                "author": p.user.name,
+                "tags": [tag.name for tag in p.tags],
+            }
+            rendered_post_data.append(post_obj)
+
+        return make_response(rendered_post_data, 200)
+
     def post(self):
         req = request.get_json()
         try:
-            p = Post(
-                title = req.get("title"),
-                body = req.get("body"),
-                user_id = req.get("user_id")
-            )
+            p = Post(title=req.get("title"), body=req.get("body"), user_id=req.get("user_id"))
             db.session.add(p)
             db.session.commit()
             post_json = p.to_dict()
@@ -62,15 +81,16 @@ class Posts(Resource):
         except:
             return make_response({"error": "Post creation failed"}, 400)
 
+
 class Posts_By_Id(Resource):
-    def get(self,id):
+    def get(self, id):
         p = Post.query.get(id)
         if p:
             post_json = p.to_dict()
             return make_response(post_json, 200)
         else:
             return make_response({"error": "Post not found"}, 404)
-        
+
     def patch(self, id):
         p = Post.query.get(id)
         req = request.get_json()
@@ -85,7 +105,7 @@ class Posts_By_Id(Resource):
                 make_response({"error": "Unable to edit post"}, 400)
         else:
             return make_response({"error": "Post not found"}, 404)
-        
+
     def delete(self, id):
         p = Post.query.get(id)
         if p:
@@ -93,22 +113,22 @@ class Posts_By_Id(Resource):
             db.session.commit()
             return make_response({}, 204)
         else:
-            return make_response({"error" : "Post not found"}, 404)
+            return make_response({"error": "Post not found"}, 404)
+
 
 # Comments Routes
+
 
 class Comments(Resource):
     def get(self):
         comments = [comment.to_dict() for comment in Comment.query.all()]
         return make_response(comments, 200)
-    
+
     def post(self):
         req = request.get_json()
         try:
             c = Comment(
-                content = req.get("content"),
-                user_id = req.get("user_id"),
-                post_id = req.get("post_id")
+                content=req.get("content"), user_id=req.get("user_id"), post_id=req.get("post_id")
             )
             db.session.add(c)
             db.session.commit()
@@ -118,16 +138,15 @@ class Comments(Resource):
             return make_response({"error": "Comment creation failed"}, 400)
 
 
-
 class Comments_By_Id(Resource):
-    def get(self,id):
+    def get(self, id):
         c = Comment.query.get(id)
         if c:
             comment_json = c.to_dict()
             return make_response(comment_json, 200)
         else:
             return make_response({"error": "comment not found"}, 404)
-        
+
     def patch(self, id):
         c = Comment.query.get(id)
         req = request.get_json()
@@ -142,7 +161,7 @@ class Comments_By_Id(Resource):
                 make_response({"error": "Unable to edit comment"}, 400)
         else:
             return make_response({"error": "Comment not found"}, 404)
-        
+
     def delete(self, id):
         c = Comment.query.get(id)
         if c:
@@ -150,20 +169,22 @@ class Comments_By_Id(Resource):
             db.session.commit()
             return make_response({}, 204)
         else:
-            return make_response({"error" : "Comment not found"}, 404)
+            return make_response({"error": "Comment not found"}, 404)
+
 
 # User Routes
 
+
 class Users(Resource):
     def get(self):
-        users = [user.to_dict(only=("id","name","posts.title")) for user in User.query.all()]
+        users = [user.to_dict(only=("id", "name", "posts.title")) for user in User.query.all()]
         return make_response(users, 200)
-    
+
     def post(self):
         req = request.get_json()
         try:
             u = User(
-                name = req.get("name"),
+                name=req.get("name"),
             )
             db.session.add(u)
             db.session.commit()
@@ -174,14 +195,14 @@ class Users(Resource):
 
 
 class Users_By_Id(Resource):
-    def get(self,id):
+    def get(self, id):
         u = User.query.get(id)
         if u:
             user_json = u.to_dict()
             return make_response(user_json, 200)
         else:
             return make_response({"error": "user not found"}, 404)
-        
+
     def patch(self, id):
         u = User.query.get(id)
         req = request.get_json()
@@ -196,7 +217,7 @@ class Users_By_Id(Resource):
                 make_response({"error": "Unable to edit user"}, 400)
         else:
             return make_response({"error": "user not found"}, 404)
-        
+
     def delete(self, id):
         u = User.query.get(id)
         if u:
@@ -204,20 +225,22 @@ class Users_By_Id(Resource):
             db.session.commit()
             return make_response({}, 204)
         else:
-            return make_response({"error" : "user not found"}, 404)
+            return make_response({"error": "user not found"}, 404)
+
 
 # Tag Routes
+
 
 class Tags(Resource):
     def get(self):
         tags = [tag.to_dict() for tag in Tag.query.all()]
         return make_response(tags, 200)
-    
+
     def post(self):
         req = request.get_json()
         try:
             t = Tag(
-                name = req.get("name"),
+                name=req.get("name"),
             )
             db.session.add(t)
             db.session.commit()
@@ -228,14 +251,14 @@ class Tags(Resource):
 
 
 class Tags_By_Id(Resource):
-    def get(self,id):
+    def get(self, id):
         t = Tag.query.get(id)
         if t:
             tag_json = t.to_dict()
             return make_response(tag_json, 200)
         else:
             return make_response({"error": "tag not found"}, 404)
-        
+
     def patch(self, id):
         t = Tag.query.get(id)
         req = request.get_json()
@@ -250,7 +273,7 @@ class Tags_By_Id(Resource):
                 make_response({"error": "Unable to edit tag"}, 400)
         else:
             return make_response({"error": "tag not found"}, 404)
-        
+
     def delete(self, id):
         t = Tag.query.get(id)
         if t:
@@ -258,7 +281,7 @@ class Tags_By_Id(Resource):
             db.session.commit()
             return make_response({}, 204)
         else:
-            return make_response({"error" : "tag not found"}, 404)
+            return make_response({"error": "tag not found"}, 404)
 
 
 api.add_resource(Comments, "/comments")
@@ -271,7 +294,5 @@ api.add_resource(Tags, "/tags")
 api.add_resource(Tags_By_Id, "/tags/<int:id>")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(port=5555, debug=True)
-
-
