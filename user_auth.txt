@@ -1,0 +1,6 @@
+1. config.py: 
+    a. add bcrypt to config file: 
+    b. from flask_bcrypt import Bcrypt
+    c. bcrypt = Bcrypt(app)
+2. models.py:
+    a. 
