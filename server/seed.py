@@ -19,7 +19,17 @@ tag4 = Tag(name="react")
 
 
 def create_users():
-    users = []
+    u1 = User(email="breellejordyn@gmail.com", name="BreElle")
+    u1.password_hash = "dog"
+
+    u2 = User(email="hirokikato1@gmail.com", name="Hiro")
+    u2.password_hash = "cat"
+
+    db.session.add(u1)
+    db.session.add(u2)
+
+    users = [u1, u2]
+
     name_list = []
     for _ in range(5):
         name = fake.name()
@@ -30,6 +40,9 @@ def create_users():
         s = User(
             name=name,
         )
+
+        s.password_hash = s.name + "password"
+
         users.append(s)
 
     return users

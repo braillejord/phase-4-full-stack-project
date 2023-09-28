@@ -1,63 +1,68 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import "./css/CreatePost.css";
 
-function CreatePost({user}) {
-  //     return (
-
-  //             // <div id="create-post-container">
-  //             //     <input id="create-post-title" placeholder="Article Title..."></input>
-  //             //     <textarea id="create-post-text" placeholder="Start typing..." rows="100"></textarea>
-  //             //     <button id="publish-post-button">Publish</button>
-  //             // </div>
-
-  //     )
-  // }
-
+function EditPost({user}) {
   let session_user_id = user.id
-
+  
   const initialState = {
     title: "",
     body: "",
     user_id: session_user_id,
   };
+  
   const [formData, setFormData] = useState(initialState);
   const history = useHistory();
   const { title, body, user_id } = formData;
+  const { id } = useParams();
+  
+  // return (
+
+      //         <div id="create-post-container">
+      //             <input id="create-post-title" placeholder="Article Title..."></input>
+      //             <textarea id="create-post-text" placeholder="Start typing..." rows="100"></textarea>
+      //             <button id="publish-post-button">Publish</button>
+      //         </div>
+
+      // )
+  // }
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:5555/posts/${id}`)
+      .then((response) => response.json())
+      .then((data) => setFormData(data));
+  }, []);
+
 
   function handleSubmit(e) {
-    e.preventDefault();
-    fetch(`http://127.0.0.1:5555/posts`, {
-      method: "POST",
+    e.preventDefault()    
+    fetch(`http://127.0.0.1:5555/posts/${id}`, {
+      method: "PATCH",
       headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
+        "Content-Type": "application/json"
+      }, body: JSON.stringify(formData)
     })
-      .then((r) => r.json())
-      // .then((data) => console.log(data))
-      .then((data) => history.push(`/posts/${data.id}`));
+    .then(r => r.json())
+    .then((data) => setFormData(data))
+    .then((data) => history.push(`/posts/${id}`));
   }
+
   function handleChange(e) {
     let key = e.target.name;
     let newValue = e.target.value;
-    // if (key === "tags" || key === "comments") {
-    //   newValue = e.target.value.split(", ");
-    // }
     setFormData({
       ...formData,
       [key]: newValue,
     });
   }
 
-  // console.log(formData);
+  console.log(formData);
 
   return (
     <div className="post-container">
       <div className="centered-post"></div>
       <form className="center" onSubmit={handleSubmit}>
-        <h1>New Post</h1>
+        <h1>Edit Post</h1>
         <br />
         <label>
           <h2>Title: </h2>
@@ -92,4 +97,4 @@ function CreatePost({user}) {
     </div>
   );
 }
-export default CreatePost;
+export default EditPost;

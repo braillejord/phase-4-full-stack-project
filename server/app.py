@@ -3,8 +3,9 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response
+from flask import request, make_response, session
 from flask_restful import Resource
+from sqlalchemy.orm import validates
 
 # Local imports
 from config import app, db, api
@@ -14,52 +15,17 @@ from models import *
 
 # Views go here!
 
-
-@app.route("/")
-def get():
-    return "<h1>Project Server</h1>"
-
-
-# from flask import Flask, request, make_response, jsonify
-# from flask_restful import Api, Resource
-# from flask_cors import CORS
-# from flask_migrate import Migrate
-
-# # Local imports
-# from models import *
-
-# app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.json.compact = False
-# api = Api(app)
-# CORS(app)
-# migrate = Migrate(app, db)
-# db.init_app(app)
-
-
-# Views go here!
-@app.route("/about")
-def index():
-    pass
-
-
 # Posts Routes
 
 
 class Posts(Resource):
     def get(self):
-        # posts = [
-        #     post.to_dict(only=("user.name", "title", "body", "created_at"))
-        #     for post in Post.query.all()
-        # ]
-        # return make_response(posts, 200)
-
         posts = Post.query.all()
         rendered_post_data = []
 
         for p in posts:
             post_obj = {
+                "id": p.id,
                 "title": p.title,
                 "body": p.body,
                 "created_at": p.created_at,
@@ -72,37 +38,58 @@ class Posts(Resource):
 
     def post(self):
         req = request.get_json()
+        p = Post(title=req.get("title"), body=req.get("body"), user_id=req.get("user_id"))
+
         try:
-            p = Post(title=req.get("title"), body=req.get("body"), user_id=req.get("user_id"))
             db.session.add(p)
             db.session.commit()
-            post_json = p.to_dict()
+            post_json = p.to_dict(only=("id", "title", "body", "user_id"))
             return make_response(post_json, 201)
         except:
-            return make_response({"error": "Post creation failed"}, 400)
+            errors = p.validation_errors
+            p.clear_validation_errors()
+            return make_response({"errors": errors}, 422)
 
 
 class Posts_By_Id(Resource):
     def get(self, id):
         p = Post.query.get(id)
         if p:
-            post_json = p.to_dict()
-            return make_response(post_json, 200)
+            post_obj = {
+                "author_id": p.user.id,
+                "title": p.title,
+                "body": p.body,
+                "created_at": p.created_at,
+                "author": p.user.name,
+                "tags": [tag.name for tag in p.tags],
+            }
+
+            return make_response(post_obj, 200)
         else:
             return make_response({"error": "Post not found"}, 404)
 
     def patch(self, id):
         p = Post.query.get(id)
-        req = request.get_json()
+
         if p:
             try:
-                for attr in req:
-                    setattr(p, attr, req.get(attr))
+                req = request.get_json()
+
+                p.title = req["title"]
+                p.body = req["body"]
+
+                if p.validation_errors:
+                    raise ValueError
+
+                db.session.add(p)
                 db.session.commit()
-                post_json = p.to_dict(rules=("-comments",))
+                post_json = p.to_dict()
+
                 return make_response(post_json, 202)
             except:
-                make_response({"error": "Unable to edit post"}, 400)
+                errors = p.validation_errors
+                p.clear_validation_errors()
+                return make_response({"error": errors}, 422)
         else:
             return make_response({"error": "Post not found"}, 404)
 
@@ -135,7 +122,9 @@ class Comments(Resource):
             comment_json = c.to_dict()
             return make_response(comment_json, 201)
         except:
-            return make_response({"error": "Comment creation failed"}, 400)
+            errors = c.validation_errors
+            c.clear_validation_errors()
+            return make_response({"errors": errors}, 422)
 
 
 class Comments_By_Id(Resource):
@@ -158,7 +147,10 @@ class Comments_By_Id(Resource):
                 comment_json = c.to_dict()
                 return make_response(comment_json, 202)
             except:
-                make_response({"error": "Unable to edit comment"}, 400)
+                errors = c.validation_errors
+                c.clear_validation_errors()
+                return make_response({"errors": errors}, 422)
+
         else:
             return make_response({"error": "Comment not found"}, 404)
 
@@ -191,7 +183,9 @@ class Users(Resource):
             user_json = u.to_dict()
             return make_response(user_json, 201)
         except:
-            return make_response({"error": "user creation failed"}, 400)
+            errors = u.validation_errors
+            u.clear_validation_errors()
+            return make_response({"errors": errors}, 422)
 
 
 class Users_By_Id(Resource):
@@ -214,7 +208,9 @@ class Users_By_Id(Resource):
                 user_json = u.to_dict()
                 return make_response(user_json, 202)
             except:
-                make_response({"error": "Unable to edit user"}, 400)
+                errors = u.validation_errors
+                u.clear_validation_errors()
+                return make_response({"errors": errors}, 422)
         else:
             return make_response({"error": "user not found"}, 404)
 
@@ -247,7 +243,9 @@ class Tags(Resource):
             tag_json = t.to_dict()
             return make_response(tag_json, 201)
         except:
-            return make_response({"error": "Tag creation failed"}, 400)
+            errors = t.validation_errors
+            t.clear_validation_errors()
+            return make_response({"errors": errors}, 422)
 
 
 class Tags_By_Id(Resource):
@@ -270,7 +268,9 @@ class Tags_By_Id(Resource):
                 tag_json = t.to_dict()
                 return make_response(tag_json, 202)
             except:
-                make_response({"error": "Unable to edit tag"}, 400)
+                errors = t.validation_errors
+                t.clear_validation_errors()
+                return make_response({"errors": errors}, 422)
         else:
             return make_response({"error": "tag not found"}, 404)
 
@@ -284,6 +284,67 @@ class Tags_By_Id(Resource):
             return make_response({"error": "tag not found"}, 404)
 
 
+# log in / sign up routes
+class Signup(Resource):
+    def post(self):
+        req = request.get_json()
+
+        name = req.get("name")
+        email = req.get("email")
+        password = req.get("password")
+
+        user = User(name=name, email=email)
+
+        user.password_hash = password
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+            session["user_id"] = user.id
+
+            return user.to_dict(), 201
+
+        except ValueError:
+            return make_response({"error": "422 Unprocessable Entity"}, 422)
+
+
+class Login(Resource):
+    def post(self):
+        req = request.get_json()
+
+        email = req.get("email")
+        password = req.get("password")
+
+        user = User.query.filter(User.email == email).first()
+
+        if user:
+            if user.authenticate(password):
+                session["user_id"] = user.id
+
+                response = make_response(user.to_dict(), 200)
+                # response.set_cookie("hint to devs", "we are logged in!")
+                print(f"This is the session['user_id']: {session['user_id']}")
+                return response
+
+        return make_response({"error": "401 Unauthorized"}, 401)
+
+
+class Logout(Resource):
+    def delete(self):
+        session["user_id"] = None
+        return make_response({}, 204)
+
+
+class CheckSession(Resource):
+    def get(self):
+        user = User.query.filter(User.id == session.get("user_id")).first()
+
+        if user:
+            return make_response(user.to_dict(), 200)
+
+        return make_response({"error": "401 Unauthorized"}, 401)
+
+
 api.add_resource(Comments, "/comments")
 api.add_resource(Comments_By_Id, "/comments/<int:id>")
 api.add_resource(Posts_By_Id, "/posts/<int:id>")
@@ -292,6 +353,10 @@ api.add_resource(Users, "/users")
 api.add_resource(Users_By_Id, "/users/<int:id>")
 api.add_resource(Tags, "/tags")
 api.add_resource(Tags_By_Id, "/tags/<int:id>")
+api.add_resource(Signup, "/signup")
+api.add_resource(Login, "/login")
+api.add_resource(Logout, "/logout")
+api.add_resource(CheckSession, "/check-session")
 
 
 if __name__ == "__main__":
