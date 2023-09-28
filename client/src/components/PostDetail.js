@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 function PostDetail() {
   const [post, setPost] = useState(null);
+  const history = useHistory();
   const { id } = useParams();
 
   useEffect(() => {
@@ -20,6 +21,7 @@ function PostDetail() {
     fetch(`http://127.0.0.1:5555/posts/${id}`, {
       method: 'DELETE',
     })
+    .then(data => history.push(`/posts`))
  }
 
   return (
@@ -51,11 +53,7 @@ function PostDetail() {
               Edit Post
             </Link>
           </button>
-          <button className="post-btn">
-            <Link className="post-link" to={`/posts/`} onClick={handleDelete}>
-              Delete Post
-            </Link>
-          </button>
+          <button className="post-btn" onClick={handleDelete}>Delete Button</button>
         </div>
 
         <div className="post-preview-image-container">

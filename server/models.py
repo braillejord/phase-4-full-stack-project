@@ -191,7 +191,7 @@ class Comment(db.Model, SerializerMixin):
 
     @validates("user_id")
     def validate_user(self, key, user_id):
-        user = User.find_by_id(user_id)
+        user = User.query.filter(User.id == user_id).first()
         if user:
             return user_id
         else:
@@ -199,7 +199,8 @@ class Comment(db.Model, SerializerMixin):
 
     @validates("post_id")
     def validate_post(self, key, post_id):
-        post = Post.find_by_id(post_id)
+        post = Post.query.filter(Post.id == post_id).first()
+
         if post:
             return post_id
         else:
