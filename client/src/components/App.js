@@ -10,6 +10,7 @@ import About from "./About";
 import Header from "./Header";
 import SearchBar from "./SearchBar";
 import PostDetail from "./PostDetail";
+import EditPost from "./EditPost";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -43,6 +44,13 @@ function App() {
           <Header>
             <TopNav handleLogout={handleLogout} />
             <CreatePost />
+          </Header>
+        </Route>
+
+        <Route exact path="/posts/:id/edit">
+          <Header>
+            <TopNav handleLogout={handleLogout} />
+            <EditPost />
           </Header>
         </Route>
 

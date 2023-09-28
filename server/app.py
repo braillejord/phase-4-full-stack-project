@@ -6,6 +6,7 @@
 from flask import request, make_response, session
 from flask_restful import Resource
 from sqlalchemy.orm import validates
+
 # Local imports
 from config import app, db, api
 
@@ -14,21 +15,11 @@ from models import *
 
 # Views go here!
 
-
-# @app.route("/")
-# def get():
-#     return "<h1>Project Server</h1>"
-
-# @app.route("/about")
-# def index():
-#     return "<h1>Project Server</h1>"
-
-
 # Posts Routes
+
 
 class Posts(Resource):
     def get(self):
-
         posts = Post.query.all()
         rendered_post_data = []
 
@@ -47,17 +38,17 @@ class Posts(Resource):
 
     def post(self):
         req = request.get_json()
+        p = Post(title=req.get("title"), body=req.get("body"), user_id=req.get("user_id"))
+
         try:
-            p = Post(title=req.get("title"), body=req.get("body"), user_id=req.get("user_id"))
-            
+            db.session.add(p)
             db.session.commit()
-            post_json = p.to_dict()
+            post_json = p.to_dict(only=("id", "title", "body", "user_id"))
             return make_response(post_json, 201)
         except:
             errors = p.validation_errors
             p.clear_validation_errors()
-            return make_response( { 'errors': errors }, 422 )
-            
+            return make_response({"errors": errors}, 422)
 
 
 class Posts_By_Id(Resource):
@@ -69,29 +60,35 @@ class Posts_By_Id(Resource):
                 "body": p.body,
                 "created_at": p.created_at,
                 "author": p.user.name,
-                "tags": [tag.name for tag in p.tags]
+                "tags": [tag.name for tag in p.tags],
             }
-            
+
             return make_response(post_obj, 200)
         else:
             return make_response({"error": "Post not found"}, 404)
 
     def patch(self, id):
         p = Post.query.get(id)
+
         if p:
             try:
                 req = request.get_json()
-                for attr in req:
-                    setattr(p, attr, req.get(attr))
-                
+
+                p.title = req["title"]
+                p.body = req["body"]
+
+                if p.validation_errors:
+                    raise ValueError
+
                 db.session.add(p)
                 db.session.commit()
-                post_json = p.to_dict(rules=("-comments",))
+                post_json = p.to_dict()
+
                 return make_response(post_json, 202)
             except:
                 errors = p.validation_errors
                 p.clear_validation_errors()
-                make_response({"error": errors}, 304)
+                return make_response({"error": errors}, 422)
         else:
             return make_response({"error": "Post not found"}, 404)
 
@@ -126,8 +123,7 @@ class Comments(Resource):
         except:
             errors = c.validation_errors
             c.clear_validation_errors()
-            return make_response( { 'errors': errors }, 422 )
-            
+            return make_response({"errors": errors}, 422)
 
 
 class Comments_By_Id(Resource):
@@ -152,8 +148,8 @@ class Comments_By_Id(Resource):
             except:
                 errors = c.validation_errors
                 c.clear_validation_errors()
-                return make_response( { 'errors': errors }, 422 )
-                
+                return make_response({"errors": errors}, 422)
+
         else:
             return make_response({"error": "Comment not found"}, 404)
 
@@ -188,8 +184,7 @@ class Users(Resource):
         except:
             errors = u.validation_errors
             u.clear_validation_errors()
-            return make_response( { 'errors': errors }, 422 )
-            
+            return make_response({"errors": errors}, 422)
 
 
 class Users_By_Id(Resource):
@@ -214,7 +209,7 @@ class Users_By_Id(Resource):
             except:
                 errors = u.validation_errors
                 u.clear_validation_errors()
-                return make_response( { 'errors': errors }, 422 )
+                return make_response({"errors": errors}, 422)
         else:
             return make_response({"error": "user not found"}, 404)
 
@@ -249,7 +244,7 @@ class Tags(Resource):
         except:
             errors = t.validation_errors
             t.clear_validation_errors()
-            return make_response( { 'errors': errors }, 422 )
+            return make_response({"errors": errors}, 422)
 
 
 class Tags_By_Id(Resource):
@@ -274,7 +269,7 @@ class Tags_By_Id(Resource):
             except:
                 errors = t.validation_errors
                 t.clear_validation_errors()
-                return make_response( { 'errors': errors }, 422 )
+                return make_response({"errors": errors}, 422)
         else:
             return make_response({"error": "tag not found"}, 404)
 
