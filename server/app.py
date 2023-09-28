@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, make_response
+from flask import request, make_response, session
 from flask_restful import Resource
 
 # Local imports
@@ -50,7 +50,7 @@ def index():
 class Posts(Resource):
     def get(self):
         # posts = [
-        #     post.to_dict(only=("user.name", "title", "body", "created_at"))
+        #     post.to_dict(only=("user.name", "title", "body", "created_at", "tags"))
         #     for post in Post.query.all()
         # ]
         # return make_response(posts, 200)
@@ -284,6 +284,67 @@ class Tags_By_Id(Resource):
             return make_response({"error": "tag not found"}, 404)
 
 
+# log in / sign up routes
+class Signup(Resource):
+    def post(self):
+        req = request.get_json()
+
+        name = req.get("name")
+        email = req.get("email")
+        password = req.get("password")
+
+        user = User(name=name, email=email)
+
+        user.password_hash = password
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+            session["user_id"] = user.id
+
+            return user.to_dict(), 201
+
+        except ValueError:
+            return make_response({"error": "422 Unprocessable Entity"}, 422)
+
+
+class Login(Resource):
+    def post(self):
+        req = request.get_json()
+
+        email = req.get("email")
+        password = req.get("password")
+
+        user = User.query.filter(User.email == email).first()
+
+        if user:
+            if user.authenticate(password):
+                session["user_id"] = user.id
+
+                return make_response(user.to_dict(), 200)
+
+        return make_response({"error": "401 Unauthorized"}, 401)
+
+
+class Logout(Resource):
+    def delete(self):
+        if session.get("user_id"):
+            session["user_id"] = None
+            return make_response({}, 204)
+
+        return make_response({"error": "401 Unauthorized"}, 401)
+
+
+class CheckSession(Resource):
+    def get(self):
+        if session.get("user_id"):
+            user = User.query.filter(User.id == session["user_id"]).first()
+
+            return make_response(user.to_dict(), 200)
+
+        return make_response({"error": "401 Unauthorized"}, 401)
+
+
 api.add_resource(Comments, "/comments")
 api.add_resource(Comments_By_Id, "/comments/<int:id>")
 api.add_resource(Posts_By_Id, "/posts/<int:id>")
@@ -292,6 +353,10 @@ api.add_resource(Users, "/users")
 api.add_resource(Users_By_Id, "/users/<int:id>")
 api.add_resource(Tags, "/tags")
 api.add_resource(Tags_By_Id, "/tags/<int:id>")
+api.add_resource(Signup, "/signup")
+api.add_resource(Login, "/login")
+api.add_resource(Logout, "/logout")
+api.add_resource(CheckSession, "/check-session")
 
 
 if __name__ == "__main__":

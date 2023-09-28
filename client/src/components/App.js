@@ -8,22 +8,50 @@ import CreatePost from "./CreatePost";
 import TopNav from "./TopNav";
 
 function App() {
+  const [user, setUser] = useState(null)
+
+  // useEffect(() => {
+  //   fetch("http://127.0.0.1:5555/check-session")
+  //   .then(r => {
+  //     if (r.ok) {
+  //       r.json().then((user) => setUser(user))
+  //     }
+  //   })
+  // }, [])
+
+  function onLogin(user) {
+    setUser(user)
+    console.log(`User set to ${user.name}`)
+  }
+
+  function handleLogout() {
+    setUser(null)
+  }
+
   return (
     <div id="page">
         <Switch>
           <Route exact path="/login">
-            <Login />
+            <Login 
+            onLogin={onLogin}
+            />
           </Route>
           <Route exact path="/create-post">
-            <TopNav />
+            <TopNav
+            handleLogout={handleLogout}
+            />
             <CreatePost />
           </Route>
           <Route exact path="/my-posts">
-            <TopNav />
+          <TopNav
+            handleLogout={handleLogout}
+            />
             <MyPosts />
           </Route>
           <Route exact path="/">
-            <TopNav />
+          <TopNav
+            handleLogout={handleLogout}
+            />
             <FeedContainer />
           </Route>
           <Route path="*">

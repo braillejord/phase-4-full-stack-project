@@ -1,13 +1,16 @@
 import React from "react";
 
-function PostPreview() {
+function PostPreview({id, body, created_at, title, author, tags}) {
     return (
         <div className="post-preview-container">
             <div className="post-preview-details">
-                <p>Post Author</p>
-                <p>Post Title</p>
-                <p>Date Posted</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>
+                <p>{author}</p>
+                <p>{title}</p>
+                <p>{created_at}</p>
+                <p>{body}</p>
+                {tags.map((tag) => (
+                    <span> #{tag} </span>
+                ))}
             </div>
             <div className="post-preview-image-container">
                 <img className="post-preview-image" src="https://static1.colliderimages.com/wordpress/wp-content/uploads/2022/03/Hogwarts-Castle.jpg"/>
