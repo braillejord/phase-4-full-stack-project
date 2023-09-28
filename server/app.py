@@ -34,6 +34,7 @@ class Posts(Resource):
 
         for p in posts:
             post_obj = {
+                "id": p.id,
                 "title": p.title,
                 "body": p.body,
                 "created_at": p.created_at,
@@ -48,7 +49,7 @@ class Posts(Resource):
         req = request.get_json()
         try:
             p = Post(title=req.get("title"), body=req.get("body"), user_id=req.get("user_id"))
-            db.session.add(p)
+            
             db.session.commit()
             post_json = p.to_dict()
             return make_response(post_json, 201)
@@ -63,8 +64,15 @@ class Posts_By_Id(Resource):
     def get(self, id):
         p = Post.query.get(id)
         if p:
-            post_json = p.to_dict()
-            return make_response(post_json, 200)
+            post_obj = {
+                "title": p.title,
+                "body": p.body,
+                "created_at": p.created_at,
+                "author": p.user.name,
+                "tags": [tag.name for tag in p.tags]
+            }
+            
+            return make_response(post_obj, 200)
         else:
             return make_response({"error": "Post not found"}, 404)
 

@@ -3,9 +3,13 @@ import { Switch, Route } from "react-router-dom";
 import Login from "./Login";
 import SideNav from "./TopNav";
 import FeedContainer from "./FeedContainer";
-import MyPosts from "./MyPosts";
+import Posts from "./PostDetail";
 import CreatePost from "./CreatePost";
 import TopNav from "./TopNav";
+import About from "./About";
+import Header from "./Header";
+import SearchBar from "./SearchBar";
+import PostDetail from "./PostDetail";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -34,18 +38,35 @@ function App() {
         <Route exact path="/login">
           <Login onLogin={onLogin} />
         </Route>
+
         <Route exact path="/create-post">
-          <TopNav handleLogout={handleLogout} />
-          <CreatePost />
+          <Header>
+            <TopNav handleLogout={handleLogout} />
+            <CreatePost />
+          </Header>
         </Route>
-        <Route exact path="/my-posts">
-          <TopNav handleLogout={handleLogout} />
-          <MyPosts />
-        </Route>
-        <Route exact path="/">
-          <TopNav handleLogout={handleLogout} />
+
+        <Route exact path="/posts">
+          <Header>
+            <TopNav handleLogout={handleLogout} search={<SearchBar />} />
+          </Header>
           <FeedContainer />
         </Route>
+
+        <Route exact path="/posts/:id">
+          <Header>
+            <TopNav handleLogout={handleLogout} />
+          </Header>
+          <PostDetail />
+        </Route>
+
+        <Route exact path="/">
+          <Header>
+            <TopNav handleLogout={handleLogout} />
+          </Header>
+          <About />
+        </Route>
+
         <Route path="*">
           <h1>404 Not Found</h1>
         </Route>
