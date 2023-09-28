@@ -4,3 +4,9 @@
     c. bcrypt = Bcrypt(app)
 2. models.py:
     a. 
+
+Hk-refactor
+1. Adds validations for models.py
+2. Adds validations to routes in app.py
+3. Moved FeedContainer component out of middle of switch statement
+4. Placed switch statement for nav bar into a header component
