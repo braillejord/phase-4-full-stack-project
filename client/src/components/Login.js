@@ -33,7 +33,7 @@ function Login({onLogin}) {
 
     function handleSignupSubmit(e) {
         e.preventDefault()
-        fetch("/signup", {
+        fetch("http://127.0.0.1:5555/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -73,7 +73,7 @@ function Login({onLogin}) {
                         <input className="signup-input-field" type="text" placeholder="password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
                         <button id="signup-form-button" type="submit">Sign Up</button>
                     </form>
-                : <button id="signup-button" onClick={() => setSignupClicked(!signupClicked)}>Signup</button>
+                : <button id="signup-button" onClick={() => setSignupClicked(!signupClicked)}>Sign Up</button>
                 }
             </div>
         </div>

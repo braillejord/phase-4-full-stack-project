@@ -2,13 +2,12 @@ import React from "react";
 import { NavLink } from "react-router-dom/cjs/react-router-dom";
 import "../index.css";
 
-function TopNav(props) {
+function TopNav({handleLogout}) {
   function handleLogoutClick() {
-    fetch("http://127.0.0.1:5555/logout", { method: "DELETE" }).then((r) => {
+    fetch("http://127.0.0.1:5555/logout", 
+    { method: "DELETE" }).then((r) => {
       if (r.ok) {
-        props.handleLogout();
-      } else {
-        console.log("Logout failed");
+        r.json().then(() => handleLogout())
       }
     });
   }
@@ -19,8 +18,6 @@ function TopNav(props) {
         <NavLink exact to="/">
           <img id="logo-image" src="def_repr.png" alt="Def Repr Logo" />
         </NavLink>
-
-        {props.search}
 
         <div id="topnav-buttons">
           <NavLink exact to="/">

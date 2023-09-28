@@ -56,6 +56,7 @@ class Posts_By_Id(Resource):
         p = Post.query.get(id)
         if p:
             post_obj = {
+                "author_id": p.user.id,
                 "title": p.title,
                 "body": p.body,
                 "created_at": p.created_at,
@@ -320,25 +321,25 @@ class Login(Resource):
             if user.authenticate(password):
                 session["user_id"] = user.id
 
-                return make_response(user.to_dict(), 200)
+                response = make_response(user.to_dict(), 200)
+                # response.set_cookie("hint to devs", "we are logged in!")
+                print(f"This is the session['user_id']: {session['user_id']}")
+                return response
 
         return make_response({"error": "401 Unauthorized"}, 401)
 
 
 class Logout(Resource):
     def delete(self):
-        if session.get("user_id"):
-            session["user_id"] = None
-            return make_response({}, 204)
-
-        return make_response({"error": "401 Unauthorized"}, 401)
+        session["user_id"] = None
+        return make_response({}, 204)
 
 
 class CheckSession(Resource):
     def get(self):
-        if session.get("user_id"):
-            user = User.query.filter(User.id == session["user_id"]).first()
+        user = User.query.filter(User.id == session.get("user_id")).first()
 
+        if user:
             return make_response(user.to_dict(), 200)
 
         return make_response({"error": "401 Unauthorized"}, 401)

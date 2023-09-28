@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import "./css/CreatePost.css";
 
-function CreatePost() {
+function CreatePost({user}) {
   //     return (
 
   //             // <div id="create-post-container">
@@ -14,10 +14,12 @@ function CreatePost() {
   //     )
   // }
 
+  let session_user_id = user.id
+
   const initialState = {
     title: "",
     body: "",
-    user_id: "",
+    user_id: session_user_id,
   };
   const [formData, setFormData] = useState(initialState);
   const history = useHistory();
@@ -56,18 +58,6 @@ function CreatePost() {
       <div className="centered-post"></div>
       <form className="center" onSubmit={handleSubmit}>
         <h1>New Post</h1>
-        <label>
-          <h2>User ID: </h2>
-        </label>
-        <input
-          className="input-title"
-          name="user_id"
-          type="text"
-          placeholder="Enter your user ID"
-          value={user_id}
-          onChange={handleChange}
-          required
-        />
         <br />
         <label>
           <h2>Title: </h2>

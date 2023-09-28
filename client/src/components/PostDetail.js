@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-function PostDetail() {
+function PostDetail({user}) {
   const [post, setPost] = useState(null);
   const history = useHistory();
   const { id } = useParams();
@@ -15,7 +15,7 @@ function PostDetail() {
 
   if (!post) return <h1>...Loading</h1>;
 
-  const { author, title, body, tags, comments, created_at, updated_at } = post;
+  const { author_id, author, title, body, tags, comments, created_at, updated_at } = post;
 
  function handleDelete() {
     fetch(`http://127.0.0.1:5555/posts/${id}`, {
@@ -23,6 +23,9 @@ function PostDetail() {
     })
     .then(data => history.push(`/posts`))
  }
+
+ console.log(user.id)
+ console.log(author_id)
 
   return (
     // <div id="post-container">
@@ -37,6 +40,7 @@ function PostDetail() {
     //   </div>
     // </div>
   // )
+
     
     <div className="post-container post-centered">
       <div className="post-preview-container">
@@ -48,12 +52,18 @@ function PostDetail() {
             <span> #{tag} </span>
           ))}
           <h6>{created_at}</h6>
-          <button className="post-btn">
-            <Link className="post-link" to={`/posts/${id}/edit`}>
-              Edit Post
-            </Link>
-          </button>
-          <button className="post-btn" onClick={handleDelete}>Delete Button</button>
+          {user.id == author_id
+          ?
+          <>
+            <button className="post-btn">
+              <Link className="post-link" to={`/posts/${id}/edit`}>
+                Edit Post
+              </Link>
+            </button>
+            <button className="post-btn" onClick={handleDelete}>Delete Button</button>
+          </>
+          : null
+        }
         </div>
 
         <div className="post-preview-image-container">

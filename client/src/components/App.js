@@ -15,14 +15,14 @@ import EditPost from "./EditPost";
 function App() {
   const [user, setUser] = useState(null);
 
-  // useEffect(() => {
-  //   fetch("http://127.0.0.1:5555/check-session")
-  //   .then(r => {
-  //     if (r.ok) {
-  //       r.json().then((user) => setUser(user))
-  //     }
-  //   })
-  // }, [])
+  useEffect(() => {
+    fetch("http://127.0.0.1:5555/check-session")
+    .then(r => {
+      if (r.ok) {
+        r.json().then((user) => setUser(user))
+      }
+    })
+  }, [])
 
   function onLogin(user) {
     setUser(user);
@@ -43,14 +43,14 @@ function App() {
         <Route exact path="/create-post">
           <Header>
             <TopNav handleLogout={handleLogout} />
-            <CreatePost />
+            <CreatePost user={user}/>
           </Header>
         </Route>
 
         <Route exact path="/posts/:id/edit">
           <Header>
             <TopNav handleLogout={handleLogout} />
-            <EditPost />
+            <EditPost user={user}/>
           </Header>
         </Route>
 
@@ -65,7 +65,7 @@ function App() {
           <Header>
             <TopNav handleLogout={handleLogout} />
           </Header>
-          <PostDetail />
+          <PostDetail user={user}/>
         </Route>
 
         <Route exact path="/">
