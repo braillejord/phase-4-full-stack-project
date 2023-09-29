@@ -322,8 +322,7 @@ class Login(Resource):
                 session["user_id"] = user.id
 
                 response = make_response(user.to_dict(), 200)
-                # response.set_cookie("hint to devs", "we are logged in!")
-                print(f"This is the session['user_id']: {session['user_id']}")
+
                 return response
 
         return make_response({"error": "401 Unauthorized"}, 401)
