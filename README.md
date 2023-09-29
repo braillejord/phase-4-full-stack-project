@@ -1,15 +1,30 @@
-# Phase 4 Full-Stack Application Project Template
+# Def _Repr_
 
-## Learning Goals
+### Professional content and resources for programmers, by programmers
 
-- Discuss the basic directory structure of a full-stack Flask/React application.
-- Carry out the first steps in creating your Phase 4 project.
+Our mission is to empower developers, coders, and programmers of all levels with valuable content, tutorials, and tips that make their journey in the tech world more exciting and rewarding.
 
----
+## Getting Started
 
-## Introduction
+### Who we are
 
-Fork and clone this lesson for a template for your full-stack application. Take
+![Alt text](image-2.png)
+
+### Create an account OR Log In
+
+![Alt text](image.png)
+
+### Cath up on the latest coding news from colleagues
+
+![Alt text](image-1.png)
+
+### Edit and Delete your own posts
+
+![Alt text](image-3.png)
+
+#### Installation and Instructions
+
+Fork and clone Def Repr to create your own publishing site. Take
 a look at the directory structure before we begin (NOTE: node_modules will be
 generated in a subsequent step):
 
@@ -109,17 +124,12 @@ different machine if the need arises.
 
 ### `server/`
 
-The `server/` directory contains all of your backend code.
+The `server/` directory contains all of the backend code.
 
-`app.py` is your Flask application. You'll want to use Flask to build a simple
-API backend like we have in previous modules. You should use Flask-RESTful for
-your routes. You should be familiar with `models.py` and `seed.py` by now, but
-remember that you will need to use Flask-SQLAlchemy, Flask-Migrate, and
-SQLAlchemy-Serializer instead of SQLAlchemy and Alembic in your models.
+`app.py` is your Flask application.
 
 The project contains a default `Pipfile` with some basic dependencies. You may
-adapt the `Pipfile` if there are additional dependencies you want to add for
-your project.
+adapt the `Pipfile` if there are additional dependencies you want to add.
 
 To download the dependencies for the backend server, run:
 
@@ -143,8 +153,7 @@ should see a web page with the heading "Project Server".
 The `client/` directory contains all of your frontend code. The file
 `package.json` has been configured with common React application dependencies,
 include `react-router-dom`. The file also sets the `proxy` field to forward
-requests to `"http://localhost:5555". Feel free to change this to another port-
-just remember to configure your Flask app to use another port as well!
+requests to `"http://localhost:5555".
 
 To download the dependencies for the frontend client, run:
 
@@ -203,7 +212,7 @@ structure:
 Edit `models.py` and start creating your models. Import your models as needed in
 other modules, i.e. `from models import ...`.
 
-Remember to regularly run
+Regularly run
 `flask db revision --autogenerate -m'<descriptive message>'`, replacing
 `<descriptive message>` with an appropriate message, and `flask db upgrade head`
 to track your modifications to the database and create checkpoints in case you
@@ -246,112 +255,5 @@ from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 
-# Local imports
-
-# Instantiate app, set attributes
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.json.compact = False
-
-# Define metadata, instantiate db
-metadata = MetaData(naming_convention={
-    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-})
-db = SQLAlchemy(metadata=metadata)
-migrate = Migrate(app, db)
-db.init_app(app)
-
-# Instantiate REST API
-api = Api(app)
-
-# Instantiate CORS
-CORS(app)
 
 ```
-
-Now let's review that last line...
-
-#### CORS
-
-CORS (Cross-Origin Resource Sharing) is a system that uses HTTP headers to
-determine whether resources from different servers-of-origin can be accessed. If
-you're using the fetch API to connect your frontend to your Flask backend, you
-need to configure CORS on your Flask application instance. Lucky for us, that
-only takes one line:
-
-```py
-CORS(app)
-
-```
-
-By default, Flask-CORS enables CORS on all routes in your application with all
-fetching servers. You can also specify the resources that allow CORS. The
-following specifies that routes beginning with `api/` allow CORS from any
-originating server:
-
-```py
-CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-```
-
-You can also set this up resource-by-resource by importing and using the
-`@cross_origin` decorator:
-
-```py
-@app.route("/")
-@cross_origin()
-def howdy():
-  return "Howdy partner!"
-
-```
-
----
-
-## Updating Your README.md
-
-`README.md` is a Markdown file that describes your project. These files can be
-used in many different ways- you may have noticed that we use them to generate
-entire Canvas lessons- but they're most commonly used as homepages for online
-Git repositories. **When you develop something that you want other people to
-use, you need to have a README.**
-
-Markdown is not a language that we cover in Flatiron's Software Engineering
-curriculum, but it's not a particularly difficult language to learn (if you've
-ever left a comment on Reddit, you might already know the basics). Refer to the
-cheat sheet in this lesson's resources for a basic guide to Markdown.
-
-### What Goes into a README?
-
-This README should serve as a template for your own- go through the important
-files in your project and describe what they do. Each file that you edit (you
-can ignore your migration files) should get at least a paragraph. Each function
-should get a small blurb.
-
-You should descibe your application first, and with a good level of detail. The
-rest should be ordered by importance to the user. (Probably routes next, then
-models.)
-
-Screenshots and links to resources that you used throughout are also useful to
-users and collaborators, but a little more syntactically complicated. Only add
-these in if you're feeling comfortable with Markdown.
-
----
-
-## Conclusion
-
-A lot of work goes into a full-stack application, but it all relies on concepts
-that you've practiced thoroughly throughout this phase. Hopefully this template
-and guide will get you off to a good start with your Phase 4 Project.
-
-Happy coding!
-
----
-
-## Resources
-
-- [Setting up a respository - Atlassian](https://www.atlassian.com/git/tutorials/setting-up-a-repository)
-- [Create a repo- GitHub Docs](https://docs.github.com/en/get-started/quickstart/create-a-repo)
-- [Markdown Cheat Sheet](https://www.markdownguide.org/cheat-sheet/)
-- [Python Circular Imports - StackAbuse](https://stackabuse.com/python-circular-imports/)
-- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/)
