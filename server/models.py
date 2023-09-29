@@ -80,18 +80,18 @@ class Post(db.Model, SerializerMixin):
 
     @validates("body")
     def validate_body(self, db_column, body):
-        if isinstance("body", str) and 1 <= len(body) <= 560:
+        if isinstance("body", str) and 1 <= len(body) <= 50000:
             return body
         else:
-            self.validation_errors.append("Body text must be a between 1 - 560 characters.")
+            self.validation_errors.append("Body text must be a between 1 - 50,000 characters.")
 
-    @validates("user_id")
-    def validate_user(self, key, user_id):
-        user = User.query.filter(User.id == user_id).first()
-        if user:
-            return user_id
-        else:
-            self.validation_errors.append("User not found.")
+    # @validates("user_id")
+    # def validate_user(self, key, user_id):
+    #     user = User.query.filter(User.id == user_id).first()
+    #     if user:
+    #         return user_id
+    #     else:
+    #         self.validation_errors.append("User not found.")
 
     def __repr__(self):
         return f'<Post "{self.title}">'
@@ -110,7 +110,7 @@ class User(db.Model, SerializerMixin):
 
     serialize_rules = ("-comments.user", "-posts.user")
 
-    email = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String)
     _password_hash = db.Column(db.String)
 
     @hybrid_property

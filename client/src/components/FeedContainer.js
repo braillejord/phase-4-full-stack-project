@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import PostPreview from "./PostPreview";
 
-function FeedContainer() {
+function FeedContainer({user}) {
   const [posts, setPosts] = useState([]);
+  const [viewMine, setViewMine] = useState(false)
 
   useEffect(() => {
     fetch("http://127.0.0.1:5555/posts")
@@ -14,9 +15,24 @@ function FeedContainer() {
     <PostPreview key={post.id} {...post} />
   ));
 
+    console.log(posts)
+
+  let mine = posts.filter((post) => {
+    if (post.author === "BreElle Wells") {
+      return true
+    }
+  })
+
+  let my_posts = mine.map((post) => (
+    <PostPreview key={post.id} {...post} />
+  ));
+
   return (
     <>
-      <div id="feed-container">{rendered_posts}</div>
+      <button id="filter-by-mine" title="My Posts" onClick={() => setViewMine(!viewMine)}>
+        <i class="ti ti-article"></i>
+      </button>
+      <div id="feed-container">{viewMine ? my_posts : rendered_posts}</div>
     </>
   );
 }

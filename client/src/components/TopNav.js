@@ -25,14 +25,19 @@ function TopNav({handleLogout}) {
               <i className="navbar-btn-icon ti ti-home"></i>
             </button>
           </NavLink>
-          <NavLink exact to="/posts">
+          {/* <NavLink exact to="/posts">
             <button className="navbar-btn" title="My Posts">
               <i className="navbar-btn-icon ti ti-notebook"></i>
             </button>
-          </NavLink>
+          </NavLink> */}
           <NavLink exact to="/create-post">
             <button className="navbar-btn" title="Create Post">
               <i className="navbar-btn-icon ti ti-pencil"></i>
+            </button>
+          </NavLink>
+          <NavLink exact to="/about">
+            <button className="navbar-btn" title="About Us">
+              <i className="navbar-btn-icon ti ti-info-circle"></i>
             </button>
           </NavLink>
           <NavLink exact to="/login">
