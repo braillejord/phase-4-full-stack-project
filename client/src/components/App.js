@@ -54,12 +54,12 @@ function App() {
           </Header>
         </Route>
 
-        <Route exact path="/posts">
+        {/* <Route exact path="/posts">
           <Header>
             <TopNav handleLogout={handleLogout} search={<SearchBar />} />
           </Header>
-          <FeedContainer />
-        </Route>
+          <Posts user={user}/>
+        </Route> */}
 
         <Route exact path="/posts/:id">
           <Header>
@@ -68,11 +68,18 @@ function App() {
           <PostDetail user={user}/>
         </Route>
 
-        <Route exact path="/">
+        <Route exact path="/about">
           <Header>
             <TopNav handleLogout={handleLogout} />
           </Header>
           <About />
+        </Route>
+
+        <Route exact path="/">
+          <Header>
+            <TopNav handleLogout={handleLogout} />
+          </Header>
+          <FeedContainer user={user}/>
         </Route>
 
         <Route path="*">
@@ -82,7 +89,5 @@ function App() {
     </div>
   );
 }
-
-// MAKE THIS A TOP NAV TOMORROW WITH CUTE BUTTONS AND BIGGER LOGO
 
 export default App;

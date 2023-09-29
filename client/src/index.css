@@ -29,7 +29,7 @@ body {
 
 #feed-container {
   height: 90vh;
-  margin: 18px 0;
+  margin-bottom: 5px;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -46,7 +46,7 @@ body {
   /* border: solid; */
   border-radius: 20px;
   padding: 5px;
-  cursor: pointer;
+  /* cursor: pointer; */
   transition: transform 0.2s;
 }
 
@@ -58,19 +58,63 @@ body {
 
 .post-preview-details {
   flex: 65;
+  padding: 5px;
   /* border: solid; */
+}
+
+.post-btn {
+  width: 7vw;
+  height: 4.5vh;
+  margin: 2px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 3px #fb621a;
+  background-color: #faff13;
+  align-self: center;
+}
+
+.post-article-btn {
+  width: 12vw;
+  height: 4.5vh;
+  margin: 2px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 3px #fb621a;
+  background-color: #faff13;
+  align-self: center;
+  cursor: pointer;
+}
+
+.post-btn:hover {
+  background-color: #fcff71;
+  cursor: pointer;
+}
+
+.post-btn:active {
+  cursor: pointer;
+  transform: translateY(3.5px);
+  transform: translateX(2px);
+  box-shadow: 10px 12px 20px 0 rgba(253, 255, 161, 0.24),
+    0 17px 50px 0 rgba(253, 255, 161, 0.19);
+}
+
+.post-btn-icon {
+  font-size: 1.5em;
 }
 
 .post-preview-image-container {
   flex: 35;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 5px;
   /* border: solid; */
 }
 
 .post-preview-image {
   max-width: 270px;
+  align-self: center;
   /* border: solid; */
 }
 
@@ -343,8 +387,7 @@ body {
     0 17px 50px 0 rgba(253, 255, 161, 0.19);
 }
 
-#about-container,
-#post-container {
+#about-container {
   height: 90vh;
   width: 100%;
   margin: 18px 0;
@@ -372,7 +415,8 @@ body {
 }
 
 .about-header,
-#post-details {
+#post-details,
+.post-body-tag {
   color: #fb621a;
 }
 
@@ -382,11 +426,121 @@ body {
 
 #about-page-header,
 #post-body-title,
-#post-body-author,
-#post-body-text {
+#post-body-author {
   color: #fff
 }
 
 #post-body {
-  width: 60vw;
+  width: 80vw;
+}
+
+#filter-by-mine {
+  align-self: end;
+  width: 3vw;
+  margin: 10px;
+  padding: 5px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 3px #fb621a;
+  background-color: #faff13;
+}
+
+#filter-by-mine:hover {
+  background-color: #fcff71;
+  cursor: pointer;
+}
+
+#filter-by-mine:active {
+  background-color: #fcff71;
+  box-shadow: 0 5px #000;
+  transform: translateY(4px);
+}
+
+.input-title {
+  font-size: 2.5rem;
+  background-color: transparent;
+  border: none;
+  margin: 1.5rem 0;
+  color: #d7dcdf;
+}
+
+.edit-input-title {
+  font-size: 2.5rem;
+  background-color: transparent;
+  border: none;
+  margin: 1.5rem 0;
+  color: #d7dcdf;
+}
+
+.edit-labels {
+  margin: 0px 0px 0px 3px;
+}
+
+.input-body {
+  font-size: 1.3rem;
+  background-color: transparent;
+  border: none;
+  margin-bottom: 1rem;
+  color: #d7dcdf;
+}
+
+.edit-input-body {
+  font-size: 1rem;
+  background-color: transparent;
+  border: none;
+  margin-bottom: 1rem;
+  color: #d7dcdf;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  width: 95vw;
+  margin-left: 30px;
+}
+
+#post-container {
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#edit-delete-btns {
+  margin-top: 20px;
+  margin-left: 0;
+}
+
+
+.edit-post-btn,
+.delete-post-btn {
+  align-self: end;
+  width: 3vw;
+  margin-right: 10px;
+  padding: 5px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 3px #fb621a;
+  background-color: #faff13;
+}
+
+.edit-post-btn:hover,
+.delete-post-btn:hover {
+  background-color: #fcff71;
+  cursor: pointer;
+}
+
+.edit-post-btn:active,
+.delete-post-btn:active {
+  background-color: #fcff71;
+  box-shadow: 0 5px #000;
+  transform: translateY(4px);
+}
+
+.edit-post-btn-link {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
 }

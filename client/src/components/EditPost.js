@@ -62,13 +62,8 @@ function EditPost({user}) {
     <div className="post-container">
       <div className="centered-post"></div>
       <form className="center" onSubmit={handleSubmit}>
-        <h1>Edit Post</h1>
-        <br />
-        <label>
-          <h2>Title: </h2>
-        </label>
         <input
-          className="input-title"
+          className="edit-input-title"
           name="title"
           type="text"
           placeholder="Create a post title..."
@@ -76,12 +71,9 @@ function EditPost({user}) {
           onChange={handleChange}
           required
         />
-        <br />
-        <label>
-          <h2>Body: </h2>
-        </label>
-        <input
-          className="input-body"
+        <textarea
+          rows="20"
+          className="edit-input-body"
           name="body"
           type="text"
           placeholder="Write your post here..."
@@ -90,7 +82,7 @@ function EditPost({user}) {
           required
         />
         <br />
-        <button className="post-btn" type="submit">
+        <button className="post-article-btn" type="submit">
           🥁 Knowledge Rocks 🎸
         </button>
       </form>
