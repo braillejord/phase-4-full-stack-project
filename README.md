@@ -1,6 +1,6 @@
 # Def __Repr__
 
-### Professional content and resources for programmers, by programmers
+## Professional content and resources for programmers, by programmers
 
 Our mission is to empower developers, coders, and programmers of all levels with valuable content, tutorials, and tips that make their journey in the tech world more exciting and rewarding.
 
